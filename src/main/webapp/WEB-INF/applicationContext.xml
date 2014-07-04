@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/integration/ws
+http://www.springframework.org/schema/integration/ws/spring-integration-ws-2.0.xsd
+http://www.springframework.org/schema/integration
+http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+	<bean id="user" class="model.User"></bean>
+	<bean id="userRole" class="model.UserRole"></bean>
+	<bean id="userManager" class="model.UserManager"></bean>
+	<context:component-scan base-package="service" />
+	<int:channel id="deleteUserChannel" datatype="model.User">
+		<int:queue capacity="10" />
+	</int:channel>
+	<int:channel id="editUserChannel" datatype="model.User">
+		<int:queue capacity="10" />
+	</int:channel>
+	<int:channel id="copyUserChannel" datatype="model.User">
+		<int:queue capacity="10" />
+	</int:channel>
+	<ws:inbound-gateway id="deleteUserInboundGateway"
+		request-channel="deleteUserChannel" />
+	<int:service-activator input-channel="deleteUserChannel"
+		ref="deleteUserEndpoint"></int:service-activator>
+	<ws:outbound-gateway id="showUserGateway"
+		request-channel="deleteUserChannel" uri="http://localhost:8080/FP/Welcome"></ws:outbound-gateway>
+
+	<ws:inbound-gateway id="editUserInboundGateway"
+		request-channel="editUserChannel" />
+	<int:service-activator input-channel="editUserChannel"
+		ref="editUserEndpoint"></int:service-activator>
+	<ws:outbound-gateway id="showUserGateway"
+		request-channel="editUserChannel" uri="http://localhost:8080/FP/Welcome"></ws:outbound-gateway>
+
+	<ws:inbound-gateway id="copyUserInboundGateway"
+		request-channel="copyUserChannel" />
+	<int:service-activator input-channel="copyUserChannel"
+		ref="copyUserEndpoint"></int:service-activator>
+	<ws:outbound-gateway id="showUserGateway"
+		request-channel="copyUserChannel" uri="http://localhost:8080/FP/Welcome"></ws:outbound-gateway>
+</beans> 
